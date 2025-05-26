@@ -11,7 +11,11 @@ import SwiftUI
 struct SuperStickiesApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            StickyView()
+                .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+                .containerBackground(.stickyYellow, for: .window)
         }
+        .defaultSize(width: 100, height: 100)
+        .windowStyle(.hiddenTitleBar)
     }
 }
