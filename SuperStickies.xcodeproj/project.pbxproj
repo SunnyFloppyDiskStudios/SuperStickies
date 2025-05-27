@@ -6,10 +6,6 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXBuildFile section */
-		8AA3AC462DE59AFE00DDA856 /* RichTextKit in Frameworks */ = {isa = PBXBuildFile; productRef = 8AA3AC452DE59AFE00DDA856 /* RichTextKit */; };
-/* End PBXBuildFile section */
-
 /* Begin PBXFileReference section */
 		8AA3ABCD2DE51B6B00DDA856 /* SuperStickies.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SuperStickies.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -27,7 +23,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8AA3AC462DE59AFE00DDA856 /* RichTextKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -70,7 +65,6 @@
 			);
 			name = SuperStickies;
 			packageProductDependencies = (
-				8AA3AC452DE59AFE00DDA856 /* RichTextKit */,
 			);
 			productName = SuperStickies;
 			productReference = 8AA3ABCD2DE51B6B00DDA856 /* SuperStickies.app */;
@@ -101,7 +95,6 @@
 			mainGroup = 8AA3ABC42DE51B6B00DDA856;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				8AA3AC442DE59AFE00DDA856 /* XCRemoteSwiftPackageReference "RichTextKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8AA3ABCE2DE51B6B00DDA856 /* Products */;
@@ -336,25 +329,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		8AA3AC442DE59AFE00DDA856 /* XCRemoteSwiftPackageReference "RichTextKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/danielsaidi/RichTextKit";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.2.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		8AA3AC452DE59AFE00DDA856 /* RichTextKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 8AA3AC442DE59AFE00DDA856 /* XCRemoteSwiftPackageReference "RichTextKit" */;
-			productName = RichTextKit;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 8AA3ABC52DE51B6B00DDA856 /* Project object */;
 }

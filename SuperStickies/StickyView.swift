@@ -15,7 +15,7 @@ struct StickyView: View {
     @State private var fileName: String = ""
     @State var pinned: Bool = false
     
-    @State private var note: NSAttributedString = NSAttributedString("")
+    @State private var note: String = ""
     
     @State private var window: NSWindow? = nil
 
