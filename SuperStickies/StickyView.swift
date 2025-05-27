@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct StickyView: View {
+    var id: UUID
+    
+    @Environment(\.openWindow) var openWindow
+    
     @State private var fileName: String = ""
     @State var pinned: Bool = false
     @State private var note: String = ""
@@ -27,13 +31,15 @@ struct StickyView: View {
             }
 
             Button {
-                // new
+                openWindow(value: UUID())
+                
             } label: {
                 Image(systemName: "plus")
                     .foregroundStyle(.black)
             }
 
             Button {
+                // pin
                 pinned.toggle()
                 window?.level = pinned ? .floating : .normal
             } label: {

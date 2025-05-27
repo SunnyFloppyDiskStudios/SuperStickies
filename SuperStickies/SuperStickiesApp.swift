@@ -10,12 +10,19 @@ import SwiftUI
 @main
 struct SuperStickiesApp: App {
     var body: some Scene {
-        WindowGroup {
-            StickyView()
-                .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-                .containerBackground(.stickyYellow, for: .window)
+        WindowGroup("Sticky", for: UUID.self) { $id in
+            if let id = id {
+                StickyView(id: id)
+                    .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+                    .containerBackground(.stickyYellow, for: .window)
+            } else {
+                StickyView(id: UUID())
+                    .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+                    .containerBackground(.stickyYellow, for: .window)
+            }
         }
-        .defaultSize(width: 100, height: 100)
+        .defaultSize(width: 320, height: 320)
         .windowStyle(.hiddenTitleBar)
+        .handlesExternalEvents(matching: ["sticky"])
     }
 }
