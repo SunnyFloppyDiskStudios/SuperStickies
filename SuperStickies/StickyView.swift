@@ -14,12 +14,15 @@ struct StickyView: View {
     
     @State private var fileName: String = ""
     @State var pinned: Bool = false
-    @State private var note: String = ""
+    
+    @State private var note: NSAttributedString = NSAttributedString("")
+    
     @State private var window: NSWindow? = nil
 
     var body: some View {
         VStack {
             TextArea(text: $note)
+            
         }
         .padding()
         .toolbar {
