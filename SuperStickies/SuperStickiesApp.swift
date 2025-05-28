@@ -9,16 +9,15 @@ import SwiftUI
 
 @main
 struct SuperStickiesApp: App {
+    @StateObject private var manager = StickyNoteManager()
+
     var body: some Scene {
         WindowGroup("Sticky", for: UUID.self) { $id in
             if let id = id {
-                StickyView(id: id)
-                    .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-                    .containerBackground(StickyView(id: id).noteColour, for: .window)
+                StickyViewLoader(id: id, manager: manager)
             } else {
-                StickyView(id: UUID())
-                    .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-                    .containerBackground(.stickyYellow, for: .window)
+                let newId = UUID()
+                StickyViewLoader(id: newId, manager: manager)
             }
         }
         .defaultSize(width: 320, height: 320)

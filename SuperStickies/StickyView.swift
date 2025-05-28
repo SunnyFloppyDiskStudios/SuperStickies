@@ -8,16 +8,11 @@
 import SwiftUI
 
 struct StickyView: View {
-    var id: UUID
-    
-    @State var noteColour: Color = .stickyYellow
-    
+    @ObservedObject var model: StickyNoteModel
+        
     @Environment(\.openWindow) var openWindow
     
     @State private var fileName: String = ""
-    @State var pinned: Bool = false
-    
-    @State private var note: String = ""
     
     @State private var window: NSWindow? = nil
     
@@ -25,8 +20,7 @@ struct StickyView: View {
 
     var body: some View {
         VStack {
-            TextArea(text: $note)
-            
+            TextArea(text: $model.note, noteColour: model.noteColour)
         }
         .padding()
         .toolbar {
@@ -47,10 +41,10 @@ struct StickyView: View {
 
             Button {
                 // pin
-                pinned.toggle()
-                window?.level = pinned ? .floating : .normal
+                model.pinned.toggle()
+                window?.level = model.pinned ? .floating : .normal
             } label: {
-                Image(systemName: pinned ? "pin.fill" : "pin")
+                Image(systemName: model.pinned ? "pin.fill" : "pin")
                     .foregroundStyle(.black)
             }
 
@@ -65,7 +59,7 @@ struct StickyView: View {
             .popover(isPresented: $showColours) {
                 HStack {
                     Button {
-                        noteColour = .stickyBlack
+                        model.noteColour = .stickyBlack
                     } label: {
                         Circle()
                             .foregroundStyle(.stickyBlack)
@@ -73,7 +67,7 @@ struct StickyView: View {
                     .buttonStyle(.plain)
                     
                     Button {
-                        noteColour = .stickyGrey
+                        model.noteColour = .stickyGrey
                     } label: {
                         Circle()
                             .foregroundStyle(.stickyGrey)
@@ -81,7 +75,7 @@ struct StickyView: View {
                     .buttonStyle(.plain)
                     
                     Button {
-                        noteColour = .stickyBlue
+                        model.noteColour = .stickyBlue
                     } label: {
                         Circle()
                             .foregroundStyle(.stickyBlue)
@@ -89,7 +83,7 @@ struct StickyView: View {
                     .buttonStyle(.plain)
                     
                     Button {
-                        noteColour = .stickyGreen
+                        model.noteColour = .stickyGreen
                     } label: {
                         Circle()
                             .foregroundStyle(.stickyGreen)
@@ -97,7 +91,7 @@ struct StickyView: View {
                     .buttonStyle(.plain)
                     
                     Button {
-                        noteColour = .stickyOrange
+                        model.noteColour = .stickyOrange
                     } label: {
                         Circle()
                             .foregroundStyle(.stickyOrange)
@@ -105,7 +99,7 @@ struct StickyView: View {
                     .buttonStyle(.plain)
                     
                     Button {
-                        noteColour = .stickyPink
+                        model.noteColour = .stickyPink
                     } label: {
                         Circle()
                             .foregroundStyle(.stickyPink)
@@ -113,7 +107,7 @@ struct StickyView: View {
                     .buttonStyle(.plain)
                     
                     Button {
-                        noteColour = .stickyPurple
+                        model.noteColour = .stickyPurple
                     } label: {
                         Circle()
                             .foregroundStyle(.stickyPurple)
@@ -121,7 +115,7 @@ struct StickyView: View {
                     .buttonStyle(.plain)
                     
                     Button {
-                        noteColour = .stickyRed
+                        model.noteColour = .stickyRed
                     } label: {
                         Circle()
                             .foregroundStyle(.stickyRed)
@@ -129,7 +123,7 @@ struct StickyView: View {
                     .buttonStyle(.plain)
                     
                     Button {
-                        noteColour = .stickyYellow
+                        model.noteColour = .stickyYellow
                     } label: {
                         Circle()
                             .foregroundStyle(.stickyYellow)
