@@ -59,7 +59,7 @@ struct TextArea: NSViewRepresentable {
             textView.autoresizingMask = [.width]
             textView.delegate = self
             
-            textView.backgroundColor = .stickyYellow
+            textView.backgroundColor = NSColor(StickyView(id: UUID()).noteColour)
             textView.textColor = .black
             textView.font = .systemFont(ofSize: 14)
 

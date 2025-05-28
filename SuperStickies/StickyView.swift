@@ -10,6 +10,8 @@ import SwiftUI
 struct StickyView: View {
     var id: UUID
     
+    @State var noteColour: Color = .stickyYellow
+    
     @Environment(\.openWindow) var openWindow
     
     @State private var fileName: String = ""
@@ -18,6 +20,8 @@ struct StickyView: View {
     @State private var note: String = ""
     
     @State private var window: NSWindow? = nil
+    
+    @State private var showColours: Bool = false
 
     var body: some View {
         VStack {
@@ -53,10 +57,86 @@ struct StickyView: View {
             Spacer()
 
             Button {
-                // colours and formatting
+                showColours.toggle()
             } label: {
                 Image(systemName: "ellipsis")
                     .foregroundStyle(.black)
+            }
+            .popover(isPresented: $showColours) {
+                HStack {
+                    Button {
+                        noteColour = .stickyBlack
+                    } label: {
+                        Circle()
+                            .foregroundStyle(.stickyBlack)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button {
+                        noteColour = .stickyGrey
+                    } label: {
+                        Circle()
+                            .foregroundStyle(.stickyGrey)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button {
+                        noteColour = .stickyBlue
+                    } label: {
+                        Circle()
+                            .foregroundStyle(.stickyBlue)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button {
+                        noteColour = .stickyGreen
+                    } label: {
+                        Circle()
+                            .foregroundStyle(.stickyGreen)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button {
+                        noteColour = .stickyOrange
+                    } label: {
+                        Circle()
+                            .foregroundStyle(.stickyOrange)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button {
+                        noteColour = .stickyPink
+                    } label: {
+                        Circle()
+                            .foregroundStyle(.stickyPink)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button {
+                        noteColour = .stickyPurple
+                    } label: {
+                        Circle()
+                            .foregroundStyle(.stickyPurple)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button {
+                        noteColour = .stickyRed
+                    } label: {
+                        Circle()
+                            .foregroundStyle(.stickyRed)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button {
+                        noteColour = .stickyYellow
+                    } label: {
+                        Circle()
+                            .foregroundStyle(.stickyYellow)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding()
             }
 
             Button {
