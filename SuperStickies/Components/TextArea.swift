@@ -11,18 +11,14 @@ import SwiftUI
 
 struct TextArea: NSViewRepresentable {
     @Binding var text: String
-    var noteColour: Color
 
     func makeNSView(context: Context) -> NSScrollView {
-        context.coordinator.createTextViewStack(noteColour: noteColour)
+        context.coordinator.createTextViewStack()
     }
 
     func updateNSView(_ nsView: NSScrollView, context: Context) {
-        if let textArea = nsView.documentView as? NSTextView {
-            if textArea.string != self.text {
-                textArea.string = self.text
-            }
-            textArea.backgroundColor = NSColor(noteColour)
+        if let textArea = nsView.documentView as? NSTextView, textArea.string != self.text {
+            textArea.string = self.text
         }
     }
 
@@ -37,13 +33,20 @@ struct TextArea: NSViewRepresentable {
             self.text = text
         }
 
+        func textView(_ textView: NSTextView, shouldChangeTextIn range: NSRange, replacementString text: String?) -> Bool {
+            defer {
+                self.text.wrappedValue = (textView.string as NSString).replacingCharacters(in: range, with: text!)
+            }
+            return true
+        }
+
         fileprivate lazy var textStorage = NSTextStorage()
         fileprivate lazy var layoutManager = NSLayoutManager()
         fileprivate lazy var textContainer = NSTextContainer()
         fileprivate lazy var textView: NSTextView = NSTextView(frame: CGRect(), textContainer: textContainer)
         fileprivate lazy var scrollview = NSScrollView()
 
-        func createTextViewStack(noteColour: Color) -> NSScrollView {
+        func createTextViewStack() -> NSScrollView {
             let contentSize = scrollview.contentSize
 
             textContainer.containerSize = CGSize(width: contentSize.width, height: CGFloat.greatestFiniteMagnitude)
@@ -55,8 +58,8 @@ struct TextArea: NSViewRepresentable {
             textView.frame = CGRect(x: 0, y: 0, width: contentSize.width, height: contentSize.height)
             textView.autoresizingMask = [.width]
             textView.delegate = self
-
-            textView.backgroundColor = NSColor(noteColour)
+            
+            textView.backgroundColor = NSColor(StickyView(id: UUID()).noteColour)
             textView.textColor = .black
             textView.font = .systemFont(ofSize: 14)
 
@@ -71,4 +74,3 @@ struct TextArea: NSViewRepresentable {
         }
     }
 }
-
