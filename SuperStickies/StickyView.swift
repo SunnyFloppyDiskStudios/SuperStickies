@@ -52,8 +52,6 @@ struct StickyView: View {
             }
 
             Spacer()
-            
-            
 
             Button {
                 showColours.toggle()
