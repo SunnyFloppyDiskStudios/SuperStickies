@@ -106,28 +106,40 @@ class RichTextView: NSTextView {
     private func toggleFontTrait(trait: NSFontTraitMask) {
         let fontManager = NSFontManager.shared
 
+        func toggledFont(from originalFont: NSFont) -> NSFont {
+            let familyName = originalFont.familyName ?? "Helvetica"
+            let baseFont = fontManager.font(
+                withFamily: familyName,
+                traits: [],
+                weight: 5,
+                size: originalFont.pointSize
+            ) ?? NSFont.systemFont(ofSize: originalFont.pointSize)
+
+            let existingTraits = fontManager.traits(of: originalFont)
+            let newTraits = existingTraits.symmetricDifference(trait)
+
+            return fontManager.font(
+                withFamily: familyName,
+                traits: newTraits,
+                weight: 5,
+                size: baseFont.pointSize
+            ) ?? baseFont
+        }
+
         if selectedRange.length > 0 {
             let range = selectedRange
             textStorage?.enumerateAttribute(.font, in: range) { value, subRange, _ in
-                guard let font = value as? NSFont else { return }
-
-                let hasTrait = fontManager.traits(of: font).contains(trait)
-                let newFont = hasTrait
-                    ? fontManager.convert(font, toNotHaveTrait: trait)
-                    : fontManager.convert(font, toHaveTrait: trait)
-
-                textStorage?.addAttribute(.font, value: newFont, range: subRange)
+                guard let originalFont = value as? NSFont else { return }
+                let font = toggledFont(from: originalFont)
+                textStorage?.addAttribute(.font, value: font, range: subRange)
             }
         } else {
-            let currentFont = typingAttributes[.font] as? NSFont ?? NSFont.systemFont(ofSize: 14)
-            let hasTrait = fontManager.traits(of: currentFont).contains(trait)
-            let newFont = hasTrait
-                ? fontManager.convert(currentFont, toNotHaveTrait: trait)
-                : fontManager.convert(currentFont, toHaveTrait: trait)
-
-            typingAttributes[.font] = newFont
+            let rawFont = typingAttributes[.font] as? NSFont ?? NSFont.systemFont(ofSize: 14)
+            let font = toggledFont(from: rawFont)
+            typingAttributes[.font] = font
         }
     }
+
 
 
     private func toggleUnderline() {
