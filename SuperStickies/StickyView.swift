@@ -11,21 +11,15 @@ struct StickyView: View {
     var id: UUID
     
     @State var noteColour: Color = .stickyYellow
-    
     @Environment(\.openWindow) var openWindow
-    
-    @State private var fileName: String = ""
     @State var pinned: Bool = false
-    
-    @State private var note: String = ""
-    
+    @State private var attributedNote = NSAttributedString(string: "")
     @State private var window: NSWindow? = nil
-    
     @State private var showColours: Bool = false
 
     var body: some View {
         VStack {
-            TextArea(text: $note)
+            TextArea(attributedText: $attributedNote, noteColour: noteColour)
         }
         .padding()
         .toolbar {
@@ -38,14 +32,12 @@ struct StickyView: View {
 
             Button {
                 openWindow(value: UUID())
-                
             } label: {
                 Image(systemName: "plus")
                     .foregroundStyle(.black)
             }
 
             Button {
-                // pin
                 pinned.toggle()
                 window?.level = pinned ? .floating : .normal
             } label: {
@@ -63,81 +55,22 @@ struct StickyView: View {
             }
             .popover(isPresented: $showColours) {
                 HStack {
-                    Button {
-                        noteColour = .stickyBlack
-                    } label: {
-                        Circle()
-                            .foregroundStyle(.stickyBlack)
+                    ForEach([
+                        Color.stickyBlack, .stickyGrey, .stickyBlue,
+                        .stickyGreen, .stickyOrange, .stickyPink,
+                        .stickyPurple, .stickyRed, .stickyYellow
+                    ], id: \.self) { colour in
+                        Button {
+                            noteColour = colour
+                        } label: {
+                            Circle().foregroundStyle(colour)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
-                    
-                    Button {
-                        noteColour = .stickyGrey
-                    } label: {
-                        Circle()
-                            .foregroundStyle(.stickyGrey)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Button {
-                        noteColour = .stickyBlue
-                    } label: {
-                        Circle()
-                            .foregroundStyle(.stickyBlue)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Button {
-                        noteColour = .stickyGreen
-                    } label: {
-                        Circle()
-                            .foregroundStyle(.stickyGreen)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Button {
-                        noteColour = .stickyOrange
-                    } label: {
-                        Circle()
-                            .foregroundStyle(.stickyOrange)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Button {
-                        noteColour = .stickyPink
-                    } label: {
-                        Circle()
-                            .foregroundStyle(.stickyPink)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Button {
-                        noteColour = .stickyPurple
-                    } label: {
-                        Circle()
-                            .foregroundStyle(.stickyPurple)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Button {
-                        noteColour = .stickyRed
-                    } label: {
-                        Circle()
-                            .foregroundStyle(.stickyRed)
-                    }
-                    .buttonStyle(.plain)
-                    
-                    Button {
-                        noteColour = .stickyYellow
-                    } label: {
-                        Circle()
-                            .foregroundStyle(.stickyYellow)
-                    }
-                    .buttonStyle(.plain)
                 }
                 .padding()
             }
-
+            
             Button {
                 // save (as rtf)
             } label: {
