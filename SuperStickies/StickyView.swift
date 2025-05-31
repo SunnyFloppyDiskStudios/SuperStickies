@@ -26,7 +26,6 @@ struct StickyView: View {
     var body: some View {
         VStack {
             TextArea(text: $note)
-            
         }
         .padding()
         .toolbar {
