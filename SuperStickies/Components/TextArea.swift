@@ -98,6 +98,10 @@ class RichTextView: NSTextView {
             toggleUnderline()
         case "s":
             toggleStrikethrough()
+        case "=":
+            adjustFontSize(by: 2)
+        case "-":
+            adjustFontSize(by: -2)
         default:
             super.keyDown(with: event)
         }
@@ -167,6 +171,23 @@ class RichTextView: NSTextView {
             let current = typingAttributes[key] as? Int ?? 0
             let newStyle = current == 0 ? NSUnderlineStyle.single.rawValue : 0
             typingAttributes[key] = newStyle
+        }
+    }
+    
+    private func adjustFontSize(by delta: CGFloat) {
+        if selectedRange.length > 0 {
+            let range = selectedRange
+            textStorage?.enumerateAttribute(.font, in: range) { value, subRange, _ in
+                guard let font = value as? NSFont else { return }
+                let newSize = max(font.pointSize + delta, 1)
+                let newFont = NSFontManager.shared.convert(font, toSize: newSize)
+                textStorage?.addAttribute(.font, value: newFont, range: subRange)
+            }
+        } else {
+            let rawFont = typingAttributes[.font] as? NSFont ?? NSFont.systemFont(ofSize: 14)
+            let newSize = max(rawFont.pointSize + delta, 1)
+            let newFont = NSFontManager.shared.convert(rawFont, toSize: newSize)
+            typingAttributes[.font] = newFont
         }
     }
 }
