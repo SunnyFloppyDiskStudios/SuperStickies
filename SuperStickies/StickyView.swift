@@ -22,6 +22,12 @@ struct StickyView: View {
             TextArea(attributedText: $attributedNote, noteColour: noteColour)
         }
         .padding()
+        .onChange(of: noteColour) { newColour in
+            window?.backgroundColor = NSColor(newColour)
+        }
+        .onWindow {_ in
+            window?.backgroundColor = NSColor(.stickyYellow)
+        }
         .toolbar {
             Button {
                 // menu

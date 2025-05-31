@@ -25,6 +25,8 @@ struct TextArea: NSViewRepresentable {
             if textArea.attributedString() != self.attributedText {
                 textArea.textStorage?.setAttributedString(self.attributedText)
             }
+            
+            textArea.backgroundColor = NSColor(noteColour)
         }
     }
 

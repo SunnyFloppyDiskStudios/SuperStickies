@@ -14,11 +14,9 @@ struct SuperStickiesApp: App {
             if let id = id {
                 StickyView(id: id)
                     .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-                    .containerBackground(StickyView(id: id).noteColour, for: .window)
             } else {
                 StickyView(id: UUID())
                     .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
-                    .containerBackground(.stickyYellow, for: .window)
             }
         }
         .defaultSize(width: 320, height: 320)
