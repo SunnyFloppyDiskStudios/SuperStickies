@@ -50,6 +50,8 @@ struct TextArea: NSViewRepresentable {
 
             textContainer.containerSize = CGSize(width: contentSize.width, height: .greatestFiniteMagnitude)
             textContainer.widthTracksTextView = true
+            
+            textView.allowsImageEditing = true
 
             textView.minSize = CGSize(width: 0, height: 0)
             textView.maxSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: .greatestFiniteMagnitude)
@@ -83,6 +85,36 @@ struct TextArea: NSViewRepresentable {
 }
 
 class RichTextView: NSTextView {
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        let pboard = sender.draggingPasteboard
+        if let files = pboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {
+            for fileURL in files {
+                let fileType = fileURL.pathExtension.lowercased()
+                if let image = NSImage(contentsOf: fileURL),
+                   ["jpg", "jpeg", "png", "gif", "bmp", "tiff", "heic", "gif"].contains(fileType) {
+                    let attachment = NSTextAttachment()
+                    attachment.image = image
+                    let attrString = NSAttributedString(attachment: attachment)
+                    let location = self.selectedRange().location
+                    self.textStorage?.insert(attrString, at: location)
+                    self.textStorage?.insert(NSAttributedString(string: "\n"), at: location + 1)
+                    self.typingAttributes[.font] = NSFont.systemFont(ofSize: 14)
+                    self.typingAttributes[.foregroundColor] = NSColor.black
+                } else {
+                    self.textStorage?.insert(NSAttributedString(string: fileURL.path), at: self.selectedRange().location)
+                }
+            }
+            self.didChangeText()
+            return true
+        }
+        return super.performDragOperation(sender)
+    }
+    
+    override func didChangeText() {
+        super.didChangeText()
+        (delegate as? TextArea.Coordinator)?.textDidChange(Notification(name: NSText.didChangeNotification, object: self))
+    }
+    
     override func keyDown(with event: NSEvent) {
         guard event.modifierFlags.contains(.command),
               let key = event.charactersIgnoringModifiers?.lowercased()

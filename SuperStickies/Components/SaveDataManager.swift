@@ -10,8 +10,9 @@ import SwiftUI
 
 struct StickyNote {
     var id: UUID
-    var note: String
+    var note: NSAttributedString
     var colour: Color
+    var screenPos: String
 }
 
 func saveData(id: UUID, note: String, colour: Color) {
