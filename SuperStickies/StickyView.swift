@@ -42,6 +42,8 @@ struct StickyView: View {
                 Image(systemName: "plus")
                     .foregroundStyle(.black)
             }
+            
+            Spacer()
 
             Button {
                 pinned.toggle()
@@ -50,8 +52,6 @@ struct StickyView: View {
                 Image(systemName: pinned ? "pin.fill" : "pin")
                     .foregroundStyle(.black)
             }
-
-            Spacer()
 
             Button {
                 showColours.toggle()
@@ -75,13 +75,6 @@ struct StickyView: View {
                     }
                 }
                 .padding()
-            }
-            
-            Button {
-                // save (as rtf)
-            } label: {
-                Image(systemName: "internaldrive.fill")
-                    .foregroundStyle(.black)
             }
         }
         .onWindow { win in
