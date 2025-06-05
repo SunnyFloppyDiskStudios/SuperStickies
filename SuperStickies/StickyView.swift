@@ -16,6 +16,8 @@ struct StickyView: View {
     @State private var attributedNote = NSAttributedString(string: "")
     @State private var window: NSWindow? = nil
     @State private var showColours: Bool = false
+    
+    @ObservedObject var manager = WindowManager.shared
 
     var body: some View {
         VStack {
@@ -30,7 +32,11 @@ struct StickyView: View {
         }
         .toolbar {
             Button {
-                // menu
+                if !manager.openWindowIDs.contains("content") {
+                    openWindow(id: "content")
+                } else {
+                    focusAllWindows(withTitle: "content")
+                }
             } label: {
                 Image(systemName: "line.3.horizontal")
                     .foregroundStyle(.black)
