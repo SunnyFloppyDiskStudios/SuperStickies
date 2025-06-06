@@ -52,9 +52,14 @@ class StickyNoteStore: ObservableObject {
 }
 
 extension NSAttributedString {
-    func rtfData() -> Data {
-        (try? self.data(from: NSRange(location: 0, length: length),
-                        documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf])) ?? Data()
+    func rtfdData() -> Data {
+        guard let wrapper = try? self.fileWrapper(
+            from: NSRange(location: 0, length: length),
+            documentAttributes: [.documentType: NSAttributedString.DocumentType.rtfd]
+        ) else {
+            return Data()
+        }
+        return wrapper.serializedRepresentation!
     }
 }
 
@@ -70,5 +75,17 @@ extension Color {
         if self == .stickyRed { return "stickyRed" }
         if self == .stickyYellow { return "stickyYellow" }
         return "stickyYellow"
+    }
+}
+
+extension NSAttributedString {
+    static func fromRTFD(_ data: Data) -> NSAttributedString {
+        guard let wrapper = try? FileWrapper(serializedRepresentation: data) else {
+            return NSAttributedString(string: "")
+        }
+        return (try? NSAttributedString(
+            rtfdFileWrapper: wrapper,
+            documentAttributes: nil
+        )) ?? NSAttributedString(string: "")
     }
 }

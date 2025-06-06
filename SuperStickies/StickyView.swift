@@ -23,6 +23,7 @@ struct StickyView: View {
     @State private var attributedNote = NSAttributedString(string: "")
     @State private var window: NSWindow? = nil
     @State private var showColours: Bool = false
+    @State private var isDeleted = false
 
     @ObservedObject var manager = WindowManager.shared
     @ObservedObject var store = StickyNoteStore.shared
@@ -33,19 +34,15 @@ struct StickyView: View {
         }
         .padding()
         .onAppear {
-            // Ensure the store is up to date
             store.loadNotes()
-
             if let loaded = store.getNote(by: id) {
-                // Existing note: load its colour and content
                 noteColour = Color.fromStickyName(loaded.colourName)
-                attributedNote = NSAttributedString.fromRTF(loaded.rtfData)
+                attributedNote = NSAttributedString.fromRTFD(loaded.rtfData)
             } else {
-                // New note: create an empty file immediately
-                let emptyRTF = NSAttributedString(string: "").rtfData()
+                let emptyData = NSAttributedString(string: "").rtfdData()
                 let newNote = StickyNote(
                     id: id,
-                    rtfData: emptyRTF,
+                    rtfData: emptyData,
                     colourName: noteColour.stickyName,
                     dateCreated: Date()
                 )
@@ -53,23 +50,19 @@ struct StickyView: View {
             }
         }
         .onDisappear {
-            saveNote()
+            if !isDeleted { saveNote() }
         }
-        .onChange(of: noteColour) { _ in
+        .onChange(of: noteColour) {
             saveNote()
+            window?.backgroundColor = NSColor(noteColour)
         }
         .onChange(of: attributedNote) { _ in
-            saveNote()
-        }
-        .onChange(of: noteColour) { newColour in
-            window?.backgroundColor = NSColor(newColour)
             saveNote()
         }
         .onWindow { _ in
             window?.backgroundColor = NSColor(noteColour)
         }
         .toolbar {
-            // menu button
             Button {
                 if !manager.openWindowIDs.contains("content") {
                     openWindow(id: "content")
@@ -80,18 +73,13 @@ struct StickyView: View {
                 Image(systemName: "line.3.horizontal")
                     .foregroundStyle(.black)
             }
-
-            // new note button
             Button {
                 openWindow(value: UUID())
             } label: {
                 Image(systemName: "plus")
                     .foregroundStyle(.black)
             }
-
             Spacer()
-
-            // pin
             Button {
                 pinned.toggle()
                 window?.level = pinned ? .floating : .normal
@@ -99,8 +87,6 @@ struct StickyView: View {
                 Image(systemName: pinned ? "pin.fill" : "pin")
                     .foregroundStyle(.black)
             }
-
-            // colour picker
             Button {
                 showColours.toggle()
             } label: {
@@ -137,12 +123,11 @@ struct StickyView: View {
                 }
                 .padding()
             }
-
-            // delete
             Button {
                 if let existing = store.getNote(by: id) {
                     store.delete(note: existing)
                 }
+                isDeleted = true
                 window?.close()
             } label: {
                 Image(systemName: "trash")
@@ -162,14 +147,14 @@ struct StickyView: View {
             }
             return
         }
-
-        let rtf = attributedNote.rtfData()
+        let rtfd = attributedNote.rtfdData()
         let note = StickyNote(
             id: id,
-            rtfData: rtf,
+            rtfData: rtfd,
             colourName: noteColour.stickyName,
             dateCreated: Date()
         )
         store.save(note: note)
     }
 }
+
