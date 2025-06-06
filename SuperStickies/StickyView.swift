@@ -1,11 +1,19 @@
 //
-//  ContentView.swift
+//  StickyView.swift
 //  SuperStickies
 //
 //  Created by SunnyFlops on 27/05/2025.
 //
 
+import Foundation
 import SwiftUI
+
+struct StickyNote: Identifiable, Codable {
+    let id: UUID
+    var rtfData: Data
+    var colourName: String
+    var dateCreated: Date
+}
 
 struct StickyView: View {
     var id: UUID
@@ -18,17 +26,28 @@ struct StickyView: View {
     @State private var showColours: Bool = false
     
     @ObservedObject var manager = WindowManager.shared
+    @ObservedObject var store = StickyNoteStore.shared
 
     var body: some View {
         VStack {
             TextArea(attributedText: $attributedNote, noteColour: noteColour)
         }
         .padding()
+        .onAppear {
+            if let loaded = store.getNote(by: id) {
+                noteColour = Color.fromStickyName(loaded.colourName)
+                attributedNote = NSAttributedString.fromRTF(loaded.rtfData)
+            }
+        }
+        .onDisappear { saveNote() }
+        .onChange(of: noteColour) { _ in saveNote() }
+        .onChange(of: attributedNote) { _ in saveNote() }
         .onChange(of: noteColour) { newColour in
             window?.backgroundColor = NSColor(newColour)
+            saveNote()
         }
-        .onWindow {_ in
-            window?.backgroundColor = NSColor(.stickyYellow)
+        .onWindow { _ in
+            window?.backgroundColor = NSColor(noteColour)
         }
         .toolbar {
             Button {
@@ -50,7 +69,6 @@ struct StickyView: View {
             }
             
             Spacer()
-
             Button {
                 pinned.toggle()
                 window?.level = pinned ? .floating : .normal
@@ -66,16 +84,30 @@ struct StickyView: View {
                     .foregroundStyle(.black)
             }
             .popover(isPresented: $showColours) {
+                // Define your color options as an array of (name, color) pairs
+                let colorOptions: [(name: String, color: Color)] = [
+                    ("stickyBlack", .stickyBlack),
+                    ("stickyGrey", .stickyGrey),
+                    ("stickyBlue", .stickyBlue),
+                    ("stickyGreen", .stickyGreen),
+                    ("stickyOrange", .stickyOrange),
+                    ("stickyPink", .stickyPink),
+                    ("stickyPurple", .stickyPurple),
+                    ("stickyRed", .stickyRed),
+                    ("stickyYellow", .stickyYellow)
+                ]
                 HStack {
-                    ForEach([
-                        Color.stickyBlack, .stickyGrey, .stickyBlue,
-                        .stickyGreen, .stickyOrange, .stickyPink,
-                        .stickyPurple, .stickyRed, .stickyYellow
-                    ], id: \.self) { colour in
+                    ForEach(colorOptions, id: \.name) { option in
                         Button {
-                            noteColour = colour
+                            noteColour = option.color
                         } label: {
-                            Circle().foregroundStyle(colour)
+                            Circle()
+                                .fill(option.color)
+                                .frame(width: 24, height: 24)
+                                .overlay(
+                                    Circle()
+                                        .stroke(noteColour == option.color ? Color.black : Color.clear, lineWidth: 3)
+                                )
                         }
                         .buttonStyle(.plain)
                     }
@@ -86,5 +118,16 @@ struct StickyView: View {
         .onWindow { win in
             self.window = win
         }
+    }
+    
+    func saveNote() {
+        let rtf = $attributedNote.wrappedValue.rtfData()
+        let note = StickyNote(
+            id: id,
+            rtfData: rtf,
+            colourName: $noteColour.wrappedValue.stickyName,
+            dateCreated: Date()
+        )
+        store.save(note: note)
     }
 }
