@@ -15,8 +15,8 @@ class StickyNoteStore: ObservableObject {
     @Published var notes: [StickyNote] = []
 
     private let notesDirectory: URL = {
-        let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let notesDir = dir.appendingPathComponent("SuperStickiesNotes", isDirectory: true)
+        let dir = URL.documentsDirectory
+        let notesDir = dir.appendingPathComponent("SuperStickies", isDirectory: true)
         try? FileManager.default.createDirectory(at: notesDir, withIntermediateDirectories: true)
         return notesDir
     }()
