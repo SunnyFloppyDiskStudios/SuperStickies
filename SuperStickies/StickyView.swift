@@ -1,4 +1,3 @@
-//
 //  StickyView.swift
 //  SuperStickies
 //
@@ -17,14 +16,14 @@ struct StickyNote: Identifiable, Codable {
 
 struct StickyView: View {
     var id: UUID
-    
+
     @State var noteColour: Color = .stickyYellow
     @Environment(\.openWindow) var openWindow
     @State var pinned: Bool = false
     @State private var attributedNote = NSAttributedString(string: "")
     @State private var window: NSWindow? = nil
     @State private var showColours: Bool = false
-    
+
     @ObservedObject var manager = WindowManager.shared
     @ObservedObject var store = StickyNoteStore.shared
 
@@ -34,14 +33,34 @@ struct StickyView: View {
         }
         .padding()
         .onAppear {
+            // Ensure the store is up to date
+            store.loadNotes()
+
             if let loaded = store.getNote(by: id) {
+                // Existing note: load its colour and content
                 noteColour = Color.fromStickyName(loaded.colourName)
                 attributedNote = NSAttributedString.fromRTF(loaded.rtfData)
+            } else {
+                // New note: create an empty file immediately
+                let emptyRTF = NSAttributedString(string: "").rtfData()
+                let newNote = StickyNote(
+                    id: id,
+                    rtfData: emptyRTF,
+                    colourName: noteColour.stickyName,
+                    dateCreated: Date()
+                )
+                store.save(note: newNote)
             }
         }
-        .onDisappear { saveNote() }
-        .onChange(of: noteColour) { _ in saveNote() }
-        .onChange(of: attributedNote) { _ in saveNote() }
+        .onDisappear {
+            saveNote()
+        }
+        .onChange(of: noteColour) { _ in
+            saveNote()
+        }
+        .onChange(of: attributedNote) { _ in
+            saveNote()
+        }
         .onChange(of: noteColour) { newColour in
             window?.backgroundColor = NSColor(newColour)
             saveNote()
@@ -50,6 +69,7 @@ struct StickyView: View {
             window?.backgroundColor = NSColor(noteColour)
         }
         .toolbar {
+            // menu button
             Button {
                 if !manager.openWindowIDs.contains("content") {
                     openWindow(id: "content")
@@ -61,14 +81,17 @@ struct StickyView: View {
                     .foregroundStyle(.black)
             }
 
+            // new note button
             Button {
                 openWindow(value: UUID())
             } label: {
                 Image(systemName: "plus")
                     .foregroundStyle(.black)
             }
-            
+
             Spacer()
+
+            // pin
             Button {
                 pinned.toggle()
                 window?.level = pinned ? .floating : .normal
@@ -77,6 +100,7 @@ struct StickyView: View {
                     .foregroundStyle(.black)
             }
 
+            // colour picker
             Button {
                 showColours.toggle()
             } label: {
@@ -84,7 +108,6 @@ struct StickyView: View {
                     .foregroundStyle(.black)
             }
             .popover(isPresented: $showColours) {
-                // Define your color options as an array of (name, color) pairs
                 let colorOptions: [(name: String, color: Color)] = [
                     ("stickyBlack", .stickyBlack),
                     ("stickyGrey", .stickyGrey),
@@ -114,18 +137,37 @@ struct StickyView: View {
                 }
                 .padding()
             }
+
+            // delete
+            Button {
+                if let existing = store.getNote(by: id) {
+                    store.delete(note: existing)
+                }
+                window?.close()
+            } label: {
+                Image(systemName: "trash")
+                    .foregroundStyle(.black)
+            }
         }
         .onWindow { win in
             self.window = win
         }
     }
-    
+
     func saveNote() {
-        let rtf = $attributedNote.wrappedValue.rtfData()
+        let plainText = attributedNote.string.trimmingCharacters(in: .whitespacesAndNewlines)
+        if plainText.isEmpty {
+            if let existing = store.getNote(by: id) {
+                store.delete(note: existing)
+            }
+            return
+        }
+
+        let rtf = attributedNote.rtfData()
         let note = StickyNote(
             id: id,
             rtfData: rtf,
-            colourName: $noteColour.wrappedValue.stickyName,
+            colourName: noteColour.stickyName,
             dateCreated: Date()
         )
         store.save(note: note)

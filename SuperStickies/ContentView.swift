@@ -10,10 +10,12 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var store = StickyNoteStore.shared
     @Environment(\.openWindow) var openWindow
-    
+
     var body: some View {
         VStack(alignment: .leading) {
-            Text("Sticky Notes").font(.title)
+            Text("Sticky Notes")
+                .font(.title)
+
             List {
                 ForEach(store.notes) { note in
                     Button(action: { openWindow(value: note.id) }) {
@@ -30,20 +32,26 @@ struct ContentView: View {
                         }
                     }
                     .contextMenu {
-                        Button("Delete") { store.delete(note: note) }
+                        Button("Delete") {
+                            store.delete(note: note)
+                        }
                     }
                 }
             }
             .frame(minHeight: 200)
-            Button("New Sticky Note") { openWindow(value: UUID()) }
-                .padding()
+
+            Button("New Sticky Note") {
+                openWindow(value: UUID())
+            }
+            .padding()
         }
         .padding()
-        .onAppear { store.loadNotes() }
+        .onAppear {
+            store.loadNotes()
+        }
     }
 }
 
-// Helper to get Color from your sticky colour name
 extension Color {
     static func fromStickyName(_ name: String) -> Color {
         switch name {
@@ -61,9 +69,10 @@ extension Color {
     }
 }
 
-// Helper to get NSAttributedString from RTF
 extension NSAttributedString {
     static func fromRTF(_ data: Data) -> NSAttributedString {
-        (try? NSAttributedString(data: data, options: [.documentType: NSAttributedString.DocumentType.rtf], documentAttributes: nil)) ?? NSAttributedString(string: "")
+        (try? NSAttributedString(data: data,
+                                 options: [.documentType: NSAttributedString.DocumentType.rtf],
+                                 documentAttributes: nil)) ?? NSAttributedString(string: "")
     }
 }

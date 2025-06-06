@@ -25,7 +25,6 @@ struct TextArea: NSViewRepresentable {
             if textArea.attributedString() != self.attributedText {
                 textArea.textStorage?.setAttributedString(self.attributedText)
             }
-            
             textArea.backgroundColor = NSColor(noteColour)
         }
     }
@@ -50,7 +49,7 @@ struct TextArea: NSViewRepresentable {
 
             textContainer.containerSize = CGSize(width: contentSize.width, height: .greatestFiniteMagnitude)
             textContainer.widthTracksTextView = true
-            
+
             textView.allowsImageEditing = true
 
             textView.minSize = CGSize(width: 0, height: 0)
@@ -109,12 +108,12 @@ class RichTextView: NSTextView {
         }
         return super.performDragOperation(sender)
     }
-    
+
     override func didChangeText() {
         super.didChangeText()
         (delegate as? TextArea.Coordinator)?.textDidChange(Notification(name: NSText.didChangeNotification, object: self))
     }
-    
+
     override func keyDown(with event: NSEvent) {
         guard event.modifierFlags.contains(.command),
               let key = event.charactersIgnoringModifiers?.lowercased()
@@ -178,8 +177,6 @@ class RichTextView: NSTextView {
         }
     }
 
-
-
     private func toggleUnderline() {
         let key: NSAttributedString.Key = .underlineStyle
         if selectedRange.length > 0 {
@@ -207,7 +204,7 @@ class RichTextView: NSTextView {
             typingAttributes[key] = newStyle
         }
     }
-    
+
     private func adjustFontSize(by delta: CGFloat) {
         if selectedRange.length > 0 {
             let range = selectedRange

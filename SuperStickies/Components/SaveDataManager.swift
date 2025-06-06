@@ -20,7 +20,7 @@ class StickyNoteStore: ObservableObject {
         try? FileManager.default.createDirectory(at: notesDir, withIntermediateDirectories: true)
         return notesDir
     }()
-    
+
     func save(note: StickyNote) {
         let url = notesDirectory.appendingPathComponent("\(note.id.uuidString).json")
         if let data = try? JSONEncoder().encode(note) {
@@ -28,13 +28,13 @@ class StickyNoteStore: ObservableObject {
             loadNotes()
         }
     }
-    
+
     func delete(note: StickyNote) {
         let url = notesDirectory.appendingPathComponent("\(note.id.uuidString).json")
         try? FileManager.default.removeItem(at: url)
         loadNotes()
     }
-    
+
     func loadNotes() {
         let files = (try? FileManager.default.contentsOfDirectory(at: notesDirectory, includingPropertiesForKeys: nil)) ?? []
         let loaded = files.compactMap { url -> StickyNote? in
@@ -45,7 +45,7 @@ class StickyNoteStore: ObservableObject {
             self.notes = loaded.sorted { $0.dateCreated > $1.dateCreated }
         }
     }
-    
+
     func getNote(by id: UUID) -> StickyNote? {
         notes.first { $0.id == id }
     }
@@ -53,7 +53,8 @@ class StickyNoteStore: ObservableObject {
 
 extension NSAttributedString {
     func rtfData() -> Data {
-        (try? self.data(from: NSRange(location: 0, length: length), documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf])) ?? Data()
+        (try? self.data(from: NSRange(location: 0, length: length),
+                        documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf])) ?? Data()
     }
 }
 
