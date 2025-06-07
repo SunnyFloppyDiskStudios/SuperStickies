@@ -73,13 +73,27 @@ struct StickyView: View {
                 Image(systemName: "line.3.horizontal")
                     .foregroundStyle(.black)
             }
+            
+            Button {
+                if let existing = store.getNote(by: id) {
+                    store.delete(note: existing)
+                }
+                isDeleted = true
+                window?.close()
+            } label: {
+                Image(systemName: "trash")
+                    .foregroundStyle(.black)
+            }
+            
             Button {
                 openWindow(value: UUID())
             } label: {
                 Image(systemName: "plus")
                     .foregroundStyle(.black)
             }
+            
             Spacer()
+            
             Button {
                 pinned.toggle()
                 window?.level = pinned ? .floating : .normal
@@ -122,16 +136,6 @@ struct StickyView: View {
                     }
                 }
                 .padding()
-            }
-            Button {
-                if let existing = store.getNote(by: id) {
-                    store.delete(note: existing)
-                }
-                isDeleted = true
-                window?.close()
-            } label: {
-                Image(systemName: "trash")
-                    .foregroundStyle(.black)
             }
         }
         .onWindow { win in

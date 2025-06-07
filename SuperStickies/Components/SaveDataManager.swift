@@ -15,6 +15,7 @@ class StickyNoteStore: ObservableObject {
     @Published var notes: [StickyNote] = []
 
     private let notesDirectory: URL = {
+        let fileManager = FileManager.default
         let dir = URL.documentsDirectory
         let notesDir = dir.appendingPathComponent("SuperStickies", isDirectory: true)
         try? FileManager.default.createDirectory(at: notesDir, withIntermediateDirectories: true)
@@ -80,10 +81,10 @@ extension Color {
 
 extension NSAttributedString {
     static func fromRTFD(_ data: Data) -> NSAttributedString {
-        guard let wrapper = try? FileWrapper(serializedRepresentation: data) else {
+        guard let wrapper = FileWrapper(serializedRepresentation: data) else {
             return NSAttributedString(string: "")
         }
-        return (try? NSAttributedString(
+        return (NSAttributedString(
             rtfdFileWrapper: wrapper,
             documentAttributes: nil
         )) ?? NSAttributedString(string: "")

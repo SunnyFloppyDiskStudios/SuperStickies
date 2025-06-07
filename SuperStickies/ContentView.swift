@@ -39,11 +39,28 @@ struct ContentView: View {
                 }
             }
             .frame(minHeight: 200)
-
-            Button("New Sticky Note") {
-                openWindow(value: UUID())
+            .scrollContentBackground(.hidden)
+            .toolbar {
+                Spacer()
+                
+                Button {
+                    
+                } label: {
+                    Image(systemName: "questionmark.diamond")
+                }
+                
+                Button {
+                    
+                } label: {
+                    Image(systemName: "info.circle")
+                }
+                
+                Button {
+                    openWindow(value: UUID())
+                } label: {
+                    Image(systemName: "plus")
+                }
             }
-            .padding()
         }
         .padding()
         .onAppear {
