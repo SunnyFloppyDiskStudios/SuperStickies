@@ -14,9 +14,11 @@ struct SuperStickiesApp: App {
             if let id = id {
                 StickyView(id: id)
                     .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+                    .windowFullScreenBehavior(.disabled)
             } else {
                 StickyView(id: UUID())
                     .toolbarBackgroundVisibility(.hidden, for: .windowToolbar)
+                    .windowFullScreenBehavior(.disabled)
             }
         }
         .defaultSize(width: 320, height: 320)
@@ -31,6 +33,7 @@ struct SuperStickiesApp: App {
                 .onDisappear {
                     WindowManager.shared.openWindowIDs.remove("content")
                 }
+                .windowFullScreenBehavior(.disabled)
         }
         .defaultSize(width: 320, height: 640)
         .windowStyle(.hiddenTitleBar)
